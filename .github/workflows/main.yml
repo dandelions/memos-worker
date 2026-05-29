@@ -3,7 +3,7 @@ name: Deploy Memos to Cloudflare
 on:
   push:
     branches:
-      - main  # 如果你的主分支叫 master，请改成 master
+      - main  # 如果你的主分支叫 master，请将其改为 master
   workflow_dispatch: # 允许你在 GitHub 页面上手动点击按钮触发部署
 
 jobs:
@@ -18,13 +18,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-node: '20'
+          node-version: '20'
 
-      # 3. 安装项目依赖（Wrangler 是 Cloudflare 的部署工具）
+      # 3. 安装项目依赖
       - name: Install dependencies
         run: npm install
 
-      # 4. 发布到 Cloudflare Workers
+      # 🌟 4. 动态注入 Cloudflare 配置
+      # 使用 sed 命令将 wrangler.toml 里的三个 YOUR_XXX 占位符替换为我们在 GitHub Repository Secrets 中配置的真实 ID
+      - name: Inject Cloudflare Config
+        run: |
+          sed -i 's/YOUR_D1_DATABASE_ID/${{ secrets.D1_DATABASE_ID }}/g' wrangler.toml
+          sed -i 's/YOUR_D1_DATABASE_NAME/${{ secrets.D1_DATABASE_NAME }}/g' wrangler.toml
+          sed -i 's/YOUR_KV_NAMESPACE_ID/${{ secrets.KV_NAMESPACE_ID }}/g' wrangler.toml
+
+      # 5. 发布到 Cloudflare Workers
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
