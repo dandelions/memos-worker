@@ -1,0 +1,32 @@
+name: Deploy Memos to Cloudflare
+
+on:
+  push:
+    branches:
+      - main  # 如果你的主分支叫 master，请改成 master
+  workflow_dispatch: # 允许你在 GitHub 页面上手动点击按钮触发部署
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 检出仓库代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 安装 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-node: '20'
+
+      # 3. 安装项目依赖（Wrangler 是 Cloudflare 的部署工具）
+      - name: Install dependencies
+        run: npm install
+
+      # 4. 发布到 Cloudflare Workers
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
