@@ -31,6 +31,8 @@ jobs:
           sed -i 's/YOUR_D1_DATABASE_ID/${{ secrets.D1_DATABASE_ID }}/g' wrangler.toml
           sed -i 's/YOUR_D1_DATABASE_NAME/${{ secrets.D1_DATABASE_NAME }}/g' wrangler.toml
           sed -i 's/YOUR_KV_NAMESPACE_ID/${{ secrets.KV_NAMESPACE_ID }}/g' wrangler.toml
+          sed -i 's/YOUR_MEMOS_USER/${{ secrets.MEMOS_USER }}/g' wrangler.toml
+          sed -i 's/YOUR_MEMOS_PASS/${{ secrets.MEMOS_PASS }}/g' wrangler.toml
 
       # 5. 发布到 Cloudflare Workers
       - name: Deploy to Cloudflare Workers
